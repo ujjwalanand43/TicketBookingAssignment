@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Image Test</title>
+  <style>
+    body { padding: 20px; font-family: Arial; }
+    .test-box { margin: 20px 0; padding: 20px; border: 2px solid #ddd; }
+    img { max-width: 300px; border: 1px solid #ccc; }
+    .bg-test { 
+      width: 300px; 
+      height: 400px; 
+      background-size: cover; 
+      background-position: center;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Image Upload Test</h1>
+  
+  <div class="test-box">
+    <h2>Test 1: Direct IMG tag</h2>
+    <img src="/uploads/1764618981356.jpg" alt="Test Image">
+  </div>
+
+  <div class="test-box">
+    <h2>Test 2: Background Image (like in app)</h2>
+    <div class="bg-test" style="background-image: url('/uploads/1764618981356.jpg');"></div>
+  </div>
+
+  <div class="test-box">
+    <h2>Test 3: Fetch from API</h2>
+    <div id="api-test">Loading...</div>
+  </div>
+
+  <script>
+    fetch('http://localhost:3000/api/movies')
+      .then(r => r.json())
+      .then(movies => {
+        const movie = movies.find(m => m.poster_url);
+        if (movie) {
+          document.getElementById('api-test').innerHTML = `
+            <p>Movie: ${movie.title}</p>
+            <p>Poster URL: ${movie.poster_url}</p>
+            <img src="${movie.poster_url}" style="max-width: 300px;">
+          `;
+        } else {
+          document.getElementById('api-test').innerHTML = 'No movies with posters found';
+        }
+      });
+  </script>
+</body>
+</html>

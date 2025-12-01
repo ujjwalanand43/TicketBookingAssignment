@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FilmTIX - Movie Booking</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Auth Page -->
+  <div id="auth-page" class="auth-container">
+    <h2 id="auth-title">Login to FilmTIX</h2>
+    <form id="auth-form">
+      <div class="form-group hidden" id="name-group">
+        <label>Name</label>
+        <input type="text" id="auth-name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="auth-email" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="auth-password" required>
+      </div>
+      <button type="submit" class="btn" style="width: 100%">Login</button>
+    </form>
+    <div class="auth-switch">
+      <span id="auth-switch-text">Don't have an account? <a href="#" id="auth-switch-link">Register</a></span>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="main-app" class="app-container hidden">
+    <header>
+      <div class="logo">FilmTIX</div>
+      <div class="user-menu">
+        <button class="btn btn-secondary" id="my-bookings-btn">My Bookings</button>
+        <button class="btn btn-secondary hidden" id="admin-btn">Admin Panel</button>
+        <div class="user-info">
+          <div class="user-avatar" id="user-avatar">U</div>
+          <span id="user-name">User</span>
+        </div>
+        <button class="btn" id="logout-btn">Logout</button>
+      </div>
+    </header>
+
+    <div class="date-selector" id="date-selector"></div>
+
+    <div class="main-content">
+      <div class="movies-section">
+        <h2>Film</h2>
+        <div class="movies-grid" id="movies-grid"></div>
+      </div>
+
+      <div class="booking-panel">
+        <h3 id="booking-title">Select a Movie</h3>
+        <div id="booking-content">
+          <p style="color: #999; text-align: center;">Choose a movie to start booking</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

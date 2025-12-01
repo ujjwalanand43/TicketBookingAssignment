@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Seat Selection Test</title>
+  <style>
+    .seat-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 50px);
+      gap: 10px;
+      margin: 20px;
+    }
+    .seat {
+      width: 50px;
+      height: 50px;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .seat:hover {
+      background: #555;
+    }
+    .seat.selected {
+      background: #667eea;
+    }
+    .seat.booked {
+      background: #ddd;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h1>Seat Selection Test</h1>
+  <div id="seat-grid" class="seat-grid"></div>
+  <div id="selected-info"></div>
+
+  <script>
+    const selectedSeats = [];
+    const grid = document.getElementById('seat-grid');
+    
+    // Create test seats
+    const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+    const seats = [];
+    rows.forEach(row => {
+      for (let i = 1; i <= 10; i++) {
+        seats.push({ id: seats.length + 1, row_label: row, seat_number: i, is_booked: false });
+      }
+    });
+    
+    // Render seats
+    grid.innerHTML = seats.map(seat => `
+      <button class="seat" data-seat-id="${seat.id}" data-seat-label="${seat.row_label}${seat.seat_number}">
+        ${seat.row_label}${seat.seat_number}
+      </button>
+    `).join('');
+    
+    // Add click listeners
+    grid.querySelectorAll('.seat').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const seatId = parseInt(this.getAttribute('data-seat-id'));
+        const seatLabel = this.getAttribute('data-seat-label');
+        
+        if (this.classList.contains('selected')) {
+          this.classList.remove('selected');
+          const index = selectedSeats.findIndex(s => s.id === seatId);
+          selectedSeats.splice(index, 1);
+        } else {
+          this.classList.add('selected');
+          selectedSeats.push({ id: seatId, label: seatLabel });
+        }
+        
+        document.getElementById('selected-info').innerHTML = 
+          `<h3>Selected: ${selectedSeats.map(s => s.label).join(', ')}</h3>`;
+      });
+    });
+  </script>
+</body>
+</html>

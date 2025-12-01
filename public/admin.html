@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - FilmTIX</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <div class="admin-header">
+      <h1 class="logo">FilmTIX Admin</h1>
+      <button class="btn" onclick="location.href='index.html'">Back to Home</button>
+    </div>
+
+    <section class="admin-section">
+      <h2>Add New Movie</h2>
+      <form id="movie-form" enctype="multipart/form-data">
+        <div class="form-group">
+          <label>Movie Poster</label>
+          <input type="file" id="poster" accept="image/*" style="padding: 10px;">
+          <small style="color: #666;">Upload movie poster image (max 5MB)</small>
+        </div>
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="title" required>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="description" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Duration (min)</label>
+            <input type="number" id="duration" required>
+          </div>
+          <div class="form-group">
+            <label>Genre</label>
+            <input type="text" id="genre" placeholder="e.g., Action, Sci-Fi" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Price (₹)</label>
+            <input type="number" id="price" placeholder="e.g., 250" required>
+          </div>
+          <div class="form-group">
+            <label>Total Seats</label>
+            <input type="number" id="total-seats" value="70" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Showtime</label>
+            <input type="datetime-local" id="showtime" required>
+          </div>
+          <div class="form-group">
+            <label>Cinema</label>
+            <input type="text" id="cinema" value="Cinema Stela" required>
+          </div>
+        </div>
+        <button type="submit" class="btn" style="width: 100%">Add Movie</button>
+      </form>
+    </section>
+
+    <section class="admin-section">
+      <h2>All Bookings</h2>
+      <div class="booking-list" id="bookings-list"></div>
+    </section>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
