@@ -74,6 +74,7 @@ function showMainApp() {
 
   if (currentUser.isAdmin) {
     document.getElementById('admin-btn').classList.remove('hidden');
+    document.getElementById('my-bookings-btn').classList.add('hidden');
   }
 
   initApp();
@@ -173,11 +174,37 @@ async function selectMovie(movie) {
     const response = await fetch(`${API_URL}/movies/${movie.id}/seats`);
     const seats = await response.json();
     console.log('Loaded seats:', seats.length);
-    displayBookingPanel(movie, seats);
+    
+    // Check if all seats are booked
+    const availableSeats = seats.filter(seat => !seat.is_booked);
+    if (availableSeats.length === 0) {
+      displayFullyBookedMessage(movie);
+    } else {
+      displayBookingPanel(movie, seats);
+    }
   } catch (error) {
     console.error('Error loading seats:', error);
     alert('Failed to load seats. Please try again.');
   }
+}
+
+function displayFullyBookedMessage(movie) {
+  const content = document.getElementById('booking-content');
+  const defaultPoster = 'https://via.placeholder.com/400x500/667eea/ffffff?text=No+Poster';
+  const posterUrl = movie.poster_url || defaultPoster;
+
+  content.innerHTML = `
+    <div class="selected-movie">
+      <img src="http://localhost:3000${posterUrl}" style="width: 100%; border-radius: 10px; margin-bottom: 15px;" alt="${movie.title}">
+      <div class="movie-genres">
+        <span class="genre-tag">${movie.genre}</span>
+      </div>
+    </div>
+    <div style="text-align: center; padding: 40px 20px; background: #fff3cd; border-radius: 10px; margin-top: 20px;">
+      <h3 style="color: #856404; margin-bottom: 10px;">🎫 All Tickets Booked!</h3>
+      <p style="color: #856404;">Sorry, all seats for this show are already booked. Please select another movie or showtime.</p>
+    </div>
+  `;
 }
 
 function displayBookingPanel(movie, seats) {
@@ -220,6 +247,11 @@ function displayBookingPanel(movie, seats) {
       </div>
     </div>
 
+    <div style="text-align: center; margin: 15px 0; color: #666;">
+      <div style="font-size: 1.5rem; margin-bottom: 5px;">🎬 SCREEN 🎬</div>
+      <div style="height: 3px; background: linear-gradient(to right, transparent, #667eea, transparent); margin: 0 auto; width: 80%;"></div>
+    </div>
+
     <div class="seat-grid" id="seat-grid"></div>
 
     <div class="price-summary">
@@ -241,12 +273,9 @@ function displayBookingPanel(movie, seats) {
       </div>
     </div>
 
-    <div class="payment-buttons">
-      <button class="payment-btn upi" onclick="processPayment('UPI')">💳 UPI</button>
-      <button class="payment-btn card" onclick="processPayment('Card')">💳 Card</button>
-      <button class="payment-btn netbanking" onclick="processPayment('Net Banking')">🏦 Net Banking</button>
-      <button class="payment-btn wallet" onclick="processPayment('Wallet')">👛 Wallet</button>
-    </div>
+    <button class="payment-btn razorpay" onclick="processRazorpayPayment()" style="width: 100%; background: #528FF0; font-size: 1.1rem; padding: 15px;">
+      💳 Pay with Razorpay
+    </button>
   `;
 
   renderSeats(seats);
@@ -265,8 +294,8 @@ function renderSeats(seats) {
             data-seat-id="${seat.id}"
             data-seat-label="${seat.row_label}${seat.seat_number}"
             ${seat.is_booked ? 'disabled' : ''}>
-      <div class="seat-row">${seat.row_label}</div>
-      <div class="seat-number">${seat.seat_number}</div>
+      <div class="seat-icon">🪑</div>
+      <div class="seat-label">${seat.row_label}${seat.seat_number}</div>
     </button>
   `).join('');
 
@@ -311,6 +340,68 @@ function updatePriceSummary() {
   document.getElementById('subtotal').textContent = `₹${subtotal.toLocaleString()}`;
   document.getElementById('discount').textContent = `₹${fee.toLocaleString()}`;
   document.getElementById('total').textContent = `₹${total.toLocaleString()}`;
+}
+
+async function processRazorpayPayment() {
+  if (selectedSeats.length === 0) {
+    alert('Please select at least one seat');
+    return;
+  }
+
+  const count = selectedSeats.length;
+  const price = selectedMovie.price;
+  const subtotal = count * price;
+  const fee = Math.round(subtotal * 0.02);
+  const total = subtotal + fee;
+
+  const options = {
+    key: 'rzp_test_R9fUFOT1UyoZxP', // Your Razorpay key
+    amount: total * 100, // Amount in paise
+    currency: 'INR',
+    name: 'FilmTIX',
+    description: `${selectedMovie.title} - ${count} Ticket(s)`,
+    image: 'https://via.placeholder.com/100x100/667eea/ffffff?text=FT',
+    handler: async function (response) {
+      // Payment successful
+      try {
+        const bookingResponse = await fetch(`${API_URL}/bookings`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            movie_id: selectedMovie.id,
+            seat_ids: selectedSeats.map(s => s.id),
+            payment_method: 'Razorpay',
+            payment_id: response.razorpay_payment_id
+          })
+        });
+
+        const result = await bookingResponse.json();
+        if (bookingResponse.ok) {
+          showTicket(result.bookingId);
+        } else {
+          alert(result.error);
+        }
+      } catch (error) {
+        alert('Booking failed: ' + error.message);
+      }
+    },
+    prefill: {
+      name: currentUser.name,
+      email: currentUser.email
+    },
+    theme: {
+      color: '#667eea'
+    }
+  };
+
+  const rzp = new Razorpay(options);
+  rzp.on('payment.failed', function (response) {
+    alert('Payment failed: ' + response.error.description);
+  });
+  rzp.open();
 }
 
 async function processPayment(method) {
@@ -388,3 +479,4 @@ async function showTicket(bookingId) {
 
 // Make functions global
 window.processPayment = processPayment;
+window.processRazorpayPayment = processRazorpayPayment;

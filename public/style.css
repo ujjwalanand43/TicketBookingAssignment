@@ -225,7 +225,7 @@ header {
   background: #333;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 8px 8px 12px 12px;
   cursor: pointer;
   font-size: 0.75rem;
   display: flex;
@@ -233,6 +233,8 @@ header {
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
+  position: relative;
+  padding: 5px;
 }
 
 .seat:hover:not(.booked) {
@@ -244,19 +246,24 @@ header {
   background: #667eea;
 }
 
+.seat.selected .seat-icon {
+  filter: brightness(1.2);
+}
+
 .seat.booked {
   background: #ddd;
   color: #999;
   cursor: not-allowed;
 }
 
-.seat-row {
-  font-size: 0.7rem;
-  font-weight: bold;
+.seat-icon {
+  font-size: 1.5rem;
+  margin-bottom: 2px;
 }
 
-.seat-number {
+.seat-label {
   font-size: 0.65rem;
+  font-weight: bold;
 }
 
 .seat-legend {

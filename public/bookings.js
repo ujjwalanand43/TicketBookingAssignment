@@ -27,10 +27,10 @@ function displayBookings(bookings) {
     return;
   }
   list.innerHTML = bookings.map(booking => {
-    const posterUrl = booking.poster_url || defaultPoster;
+    const posterUrl = booking.poster_url ? `http://localhost:3000${booking.poster_url}` : defaultPoster;
     return `
-    <div class="booking-item" style="display: flex; gap: 15px; align-items: center;">
-      <img src="${posterUrl}" style="width: 80px; height: 110px; object-fit: cover; border-radius: 8px;" alt="${booking.title}">`;
+    <div class="booking-item" style="display: flex; gap: 15px; align-items: center; padding: 20px; background: #f9f9f9; border-radius: 10px; margin-bottom: 15px;">
+      <img src="${posterUrl}" style="width: 80px; height: 110px; object-fit: cover; border-radius: 8px;" alt="${booking.title}">
       <div style="flex: 1;">
         <div>
           <strong style="font-size: 1.1rem;">${booking.title}</strong><br>
@@ -47,7 +47,8 @@ function displayBookings(bookings) {
         <small style="color: #999;">Booked: ${new Date(booking.booking_date).toLocaleDateString()}</small>
       </div>
     </div>
-    `).join('');
+    `;
+  }).join('');
 }
 
 loadMyBookings();

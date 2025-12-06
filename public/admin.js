@@ -65,22 +65,22 @@ function displayBookings(bookings) {
         return;
     }
     list.innerHTML = bookings.map(booking => `
-    <div class="booking-item">
+    <div class="booking-item" style="display: grid; grid-template-columns: 2fr 1.5fr 1.5fr 1fr; gap: 15px; align-items: center; padding: 20px; background: #f9f9f9; border-radius: 10px; margin-bottom: 15px;">
       <div>
-        <strong>${booking.title}</strong><br>
-        <small>${new Date(booking.showtime).toLocaleString()}</small>
+        <strong style="font-size: 1.1rem;">${booking.title}</strong><br>
+        <small style="color: #666;">📅 ${new Date(booking.showtime).toLocaleString()}</small>
       </div>
       <div>
-        ${booking.name}<br>
-        <small>${booking.email}</small>
+        <strong>${booking.name}</strong><br>
+        <small style="color: #666;">📧 ${booking.email}</small>
       </div>
       <div>
-        Seats: ${booking.seats || 'N/A'}<br>
-        <small>${booking.payment_method}</small>
+        <strong>💺 Seats:</strong> ${booking.seats || 'N/A'}<br>
+        <small style="color: #666;">💳 ${booking.payment_method}</small>
       </div>
-      <div>
-        <strong>₹${parseFloat(booking.total_amount).toLocaleString()}</strong><br>
-        <small>${new Date(booking.booking_date).toLocaleDateString()}</small>
+      <div style="text-align: right;">
+        <strong style="font-size: 1.2rem; color: #667eea;">₹${parseFloat(booking.total_amount).toLocaleString()}</strong><br>
+        <small style="color: #999;">${new Date(booking.booking_date).toLocaleDateString()}</small>
       </div>
     </div>
   `).join('');
